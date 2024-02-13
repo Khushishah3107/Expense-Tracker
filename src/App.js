@@ -1,23 +1,27 @@
-import logo from './logo.svg';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-
+import Home from './Pages/Home';
+import AddExpenseForm from './Components/AddExpenseForm';
+import { Route, BrowserRouter as Router,Routes } from 'react-router-dom'; 
+import AddincomeForm from './Components/AddIncomeForm';
+import ViewExpense from './Components/ViewExpense';
+import EditExpense from './Components/EditExpense';
+import EditBudget from './Components/EditBudget';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <Router>
+     
+      <Routes>
+        <Route exact path="/" element={<Home/>}/>
+        <Route exact path='/addexpense' element={<AddExpenseForm/>}/>
+        <Route exact path='/addincome' element={<AddincomeForm/>}/>
+        <Route exact path='/viewexpense/:id' element={<ViewExpense/>}/>
+        <Route exact path='/editexpense/:id' element={<EditExpense/>}/>
+        <Route exact path='/editbudget' element={<EditBudget/>}/>
+      </Routes>
+     
+      </Router>
     </div>
   );
 }
