@@ -3,18 +3,18 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
 const AddincomeForm = () => {
   let navigate = useNavigate()
-  const [expense,setExpense] = useState({
-    expenseType:"",
-    cost:"",
-    expenseDate:""
+  const [income,setIncome] = useState({
+    incomeDesc:"",
+    amount:"",
+    incomeDate:""
   })
-  const{expenseType,cost,expenseDate}= expense
+  const{incomeDesc,amount,incomeDate}= income
   const onInputChange=(e)=>{
-    setExpense({...expense,[e.target.name]:e.target.value})
+    setIncome({...income,[e.target.name]:e.target.value})
   }
   const onSubmit=async(e)=>{
     e.preventDefault();
-    await axios.post("http://localhost:8080/expense",expense);
+    await axios.post("http://localhost:8080/income",income);
     navigate("/")
   }
   return (
@@ -26,21 +26,21 @@ const AddincomeForm = () => {
             </h2>
       <form onSubmit={(e)=>onSubmit(e)}>
         <div className="row mb-3">
-          <label htmlFor="expenseType" className="col-sm-2 col-form-label">Income Type</label>
+          <label htmlFor="incomeDesc" className="col-sm-2 col-form-label">Income Description</label>
           <div className="col-sm-6">
-            <input type={"text"} required="required" className='form-control' name='expenseType' placeholder='Enter expense type' value={expenseType} onChange={(e)=>onInputChange(e)}/>
+            <input type={"text"} required="required" className='form-control' name='incomeDesc' placeholder='Enter income description' value={incomeDesc} onChange={(e)=>onInputChange(e)}/>
           </div>
         </div>
         <div className="row mb-3">
-          <label htmlFor="cost" className="col-sm-2 col-form-label">Amount</label>
+          <label htmlFor="amount" className="col-sm-2 col-form-label">Amount</label>
           <div className="col-sm-6">
-            <input type={"text"} required="required" className='form-control' name='cost' value={cost} placeholder='Enter cost' onChange={(e)=>onInputChange(e)}/>
+            <input type={"text"} required="required" className='form-control' name='amount' value={amount} placeholder='Enter amount' onChange={(e)=>onInputChange(e)}/>
           </div>
         </div>
         <div className="row mb-3">
-          <label htmlFor="expenseDate" className="col-sm-2 col-form-label">Income Date</label>
+          <label htmlFor="incomeDate" className="col-sm-2 col-form-label">Income Date</label>
           <div className="col-sm-6">
-            <input type={"date"} required="required" className='form-control' name='expenseDate' placeholder='Enter expense date' value={expenseDate} onChange={(e)=>onInputChange(e)}/>
+            <input type={"date"} required="required" className='form-control' name='incomeDate' placeholder='Enter income date' value={incomeDate} onChange={(e)=>onInputChange(e)}/>
           </div>
         </div>
         <div className="row">

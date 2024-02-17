@@ -16,8 +16,8 @@ function App() {
         <Route exact path="/" element={<Home/>}/>
         <Route exact path='/addexpense' element={<AddExpenseForm/>}/>
         <Route exact path='/addincome' element={<AddincomeForm/>}/>
-        <Route exact path='/viewexpense/:id' element={<ViewExpense/>}/>
-        <Route exact path='/editexpense/:id' element={<EditExpense/>}/>
+        <Route exact path='/viewtransaction/:id' element={<ViewExpense/>}/>
+        <Route exact path='/edittransaction/:id' element={<EditExpense/>}/>
         <Route exact path='/editbudget' element={<EditBudget/>}/>
       </Routes>
      

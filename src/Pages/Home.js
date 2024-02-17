@@ -2,29 +2,55 @@ import React, { useEffect, useState } from 'react'
 import Budget from '../Components/Budget'
 import Remaining from '../Components/Remaining'
 import Expense from '../Components/Expense'
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
+import Income from '../Components/Income'
 const Home = () => {
-  const [expenses,setExpenses] = useState([]);
+  // const [expenses,setExpenses] = useState([]);
   // const [incomes,setIncomes] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   useEffect(()=>{
-    loadExpenses();
+   // loadExpenses();
     // loadIncomes();
+    loadTransactions();
   },[]);
   const {id} = useParams()
-  const loadExpenses = async()=>{
-    const result = await axios.get("http://localhost:8080/expenses");
-    setExpenses(result.data);
-  }
+  // const loadExpenses = async()=>{
+  //   const result = await axios.get("http://localhost:8080/expenses");
+  //   setExpenses(result.data);
+  // }
+
   // const loadIncomes = async()=>{
   //   const result = await axios.get("http://localhost:8080/incomes");
   //   setIncomes(result.data);
   // }
-  const deleteExpense=async(id)=>{
-    await axios.delete(`http://localhost:8080/expense/${id}`)
-    loadExpenses()
-}
+  const loadTransactions = async () => {
+    const incomeResult = await axios.get('http://localhost:8080/incomes');
+    const expenseResult = await axios.get('http://localhost:8080/expenses');
+  
+    // Assuming your income and expense structures have different column names
+    const combinedTransactions = [
+      ...expenseResult.data.map((expense) => ({ ...expense, isExpense: true })),
+      ...incomeResult.data.map((income) => ({ ...income, isExpense: false })),
+    ];
+  
+    // Sort transactions by date in ascending order
+    const sortedTransactions = combinedTransactions.sort((a, b) => {
+      const dateA = new Date(a.isExpense ? a.expenseDate : a.incomeDate);
+      const dateB = new Date(b.isExpense ? b.expenseDate : b.incomeDate);
+      return dateA - dateB;
+    });
+  
+    setTransactions(sortedTransactions);
+  };
+  
+  const deleteTransaction = async (id, isExpense) => {
+    const endpoint = isExpense ? "expense" : "income";
+    await axios.delete(`http://localhost:8080/${endpoint}/${id}`);
+    loadTransactions();
+  }
   return (
     <>
   
@@ -35,7 +61,7 @@ const Home = () => {
             <Budget/>
         </div>
         <div className="col-sm">
-            <Remaining/>
+           <Income/>
         </div>
         <div className="col-sm">
             <Expense/>
@@ -48,31 +74,34 @@ const Home = () => {
     <tr>
       <th scope="col">#</th>
       <th scope="col">Category</th>
-      <th scope="col">Cost</th>
+      <th scope="col">Amount</th>
       <th scope="col">Date</th>
       <th scope='col'>Actions</th>
     </tr>
   </thead>
   <tbody>
-    {
-        expenses.map((expense,index)=>(
-          <tr >
-                <th scope="row" key={index}>{index+1}</th>
-                <td>{expense.expenseType}</td>
-                <td>{expense.cost}</td>
-                <td>{expense.expenseDate}</td>
-                <td>
-                    <Link className='btn btn-primary mx-2' to={`/viewexpense/${expense.id}`}>View</Link>
-                    <Link className='btn btn-outline-primary mx-2' to={`/editexpense/${expense.id}`}>Edit</Link>
-                    <button className='btn btn-danger mx-2' onClick={()=>deleteExpense(expense.id)}>Delete</button>
-                </td>
-            </tr>
-        ))
-    }
-    
-   
-    
-  </tbody>
+        {transactions.map((transaction, index) => (
+        <tr key={index} className={`table-row ${transaction.isExpense ? 'table-danger' : 'table-success'}`}>
+            <th scope="row">{index + 1}</th>
+            <td>{transaction.isExpense ? transaction.expenseType : transaction.incomeDesc}</td>
+            <td>₹{transaction.isExpense ? transaction.cost : transaction.amount}</td>
+            <td>{transaction.isExpense ? transaction.expenseDate : transaction.incomeDate}</td>
+           <td>
+  <div className="btn-group">
+    <Link className='btn btn-primary' to={`/viewtransaction/${transaction.id}`}>
+      <FontAwesomeIcon icon={faEye} />
+    </Link>
+    <Link className='btn btn-outline-primary' to={`/edittransaction/${transaction.id}`}>
+      <FontAwesomeIcon icon={faEdit} />
+    </Link>
+    <button className='btn btn-danger' onClick={() => deleteTransaction(transaction.id, transaction.isExpense)}>
+      <FontAwesomeIcon icon={faTrash} />
+    </button>
+  </div>
+</td>
+          </tr>
+        ))}
+      </tbody>
 </table>
       </div>
     </div>

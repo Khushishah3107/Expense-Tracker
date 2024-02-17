@@ -20,7 +20,7 @@ const Expense = () => {
   }, []);
 
   return (
-    <div className='alert alert-danger'>
+    <div className='alert alert-danger' style={{ height: `${70}px` }}>
       <span>Expended: ₹{totalExpense}</span>
     </div>
   );
