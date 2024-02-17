@@ -1,42 +1,44 @@
 import React, { useEffect, useState } from 'react'
 import Budget from '../Components/Budget'
-import Remaining from '../Components/Remaining'
+
 import Expense from '../Components/Expense'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams,useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Income from '../Components/Income'
+
+const WarningMessage = () => (
+  <div className="alert alert-warning" role="alert">
+    Warning: Your budget is greater than 0!
+  </div>
+);
 const Home = () => {
-  // const [expenses,setExpenses] = useState([]);
-  // const [incomes,setIncomes] = useState([]);
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [totalExpense, setTotalExpense] = useState(0);
+  const [budget, setBudget] = useState(2000);
+  
   const [transactions, setTransactions] = useState([]);
+  const [warning, setWarning] = useState(false);
+  const navigate = useNavigate();
+
   useEffect(()=>{
-   // loadExpenses();
-    // loadIncomes();
+ 
     loadTransactions();
   },[]);
   const {id} = useParams()
-  // const loadExpenses = async()=>{
-  //   const result = await axios.get("http://localhost:8080/expenses");
-  //   setExpenses(result.data);
-  // }
-
-  // const loadIncomes = async()=>{
-  //   const result = await axios.get("http://localhost:8080/incomes");
-  //   setIncomes(result.data);
-  // }
+ 
   const loadTransactions = async () => {
     const incomeResult = await axios.get('http://localhost:8080/incomes');
     const expenseResult = await axios.get('http://localhost:8080/expenses');
   
-    // Assuming your income and expense structures have different column names
+  
     const combinedTransactions = [
       ...expenseResult.data.map((expense) => ({ ...expense, isExpense: true })),
       ...incomeResult.data.map((income) => ({ ...income, isExpense: false })),
     ];
   
-    // Sort transactions by date in ascending order
+   
     const sortedTransactions = combinedTransactions.sort((a, b) => {
       const dateA = new Date(a.isExpense ? a.expenseDate : a.incomeDate);
       const dateB = new Date(b.isExpense ? b.expenseDate : b.incomeDate);
@@ -45,7 +47,41 @@ const Home = () => {
   
     setTransactions(sortedTransactions);
   };
-  
+  useEffect(() => {
+    const fetchIncomes = async () => {
+      try {
+        const result = await axios.get("http://localhost:8080/incomes");
+        const incomes = result.data;
+        const total = incomes.reduce((acc, income) => acc + income.amount, 0);
+        setTotalIncome(total);
+      } catch (error) {
+        console.error("Error fetching incomes", error);
+      }
+    };
+
+    const fetchExpenses = async () => {
+      try {
+        const result = await axios.get("http://localhost:8080/expenses");
+        const expenses = result.data;
+        const total = expenses.reduce((acc, expense) => acc + expense.cost, 0);
+        setTotalExpense(total);
+      } catch (error) {
+        console.error("Error fetching expenses", error);
+      }
+    };
+
+    fetchIncomes();
+    fetchExpenses();
+  }, []);
+
+  useEffect(() => {
+    
+    const newBudget = totalIncome - totalExpense;
+    setBudget(newBudget);
+    
+    setWarning(newBudget < 0);
+  }, [totalIncome, totalExpense]);
+ 
   const deleteTransaction = async (id, isExpense) => {
     const endpoint = isExpense ? "expense" : "income";
     await axios.delete(`http://localhost:8080/${endpoint}/${id}`);
@@ -53,18 +89,18 @@ const Home = () => {
   }
   return (
     <>
-  
+    {warning && <WarningMessage />}
     <div className='container'>
       <h1 className='mt-3'>My Budget Planner</h1>
       <div className="row mt-3">
         <div className="col-sm">
-            <Budget/>
+            <Budget budget={budget}/>
         </div>
         <div className="col-sm">
-           <Income/>
+           <Income totalIncome={totalIncome}/>
         </div>
         <div className="col-sm">
-            <Expense/>
+            <Expense totalExpense={totalExpense}/>
         </div>
       </div>
       <div className='container'>
@@ -106,8 +142,15 @@ const Home = () => {
       </div>
     </div>
     </div>
-    {/* <AddExpenseForm/> */}
-    <Link className='btn btn-outline-danger mr-2' to={{ pathname: "/addexpense", state: { isExpense: true } }} style={{ marginRight: '13px' }}>Add Expense</Link>
+    
+    <Link
+          className={`btn btn-outline-danger mr-2 ${budget < 0 ? 'disabled' : ''}`}
+          to={{ pathname: "/addexpense", state: { isExpense: true } }}
+         
+          style={{ marginRight: '13px' }}
+        >
+          Add Expense
+        </Link>
       <Link className='btn btn-outline-success' to={{ pathname: "/addincome", state: { isExpense: false } }}>Add Income</Link>
 
     </>
