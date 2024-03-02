@@ -27,6 +27,11 @@ const Navbar = () => {
                 Statistics
               </Link>
             </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/cat">
+                Add Category
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

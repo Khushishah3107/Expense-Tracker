@@ -29,25 +29,60 @@ const Home = () => {
   },[]);
   const {id} = useParams()
  
-  const loadTransactions = async () => {
-    const incomeResult = await axios.get('http://localhost:8080/incomes');
-    const expenseResult = await axios.get('http://localhost:8080/expenses');
+  // const loadTransactions = async () => {
+  //   const incomeResult = await axios.get('http://localhost:8080/incomes');
+  //   const expenseResult = await axios.get('http://localhost:8080/expenses');
   
   
-    const combinedTransactions = [
-      ...expenseResult.data.map((expense) => ({ ...expense, isExpense: true })),
-      ...incomeResult.data.map((income) => ({ ...income, isExpense: false })),
-    ];
+  //   const combinedTransactions = [
+  //     ...expenseResult.data.map((expense) => ({ ...expense, isExpense: true })),
+  //     ...incomeResult.data.map((income) => ({ ...income, isExpense: false })),
+  //   ];
   
    
-    const sortedTransactions = combinedTransactions.sort((a, b) => {
-      const dateA = new Date(a.isExpense ? a.expenseDate : a.incomeDate);
-      const dateB = new Date(b.isExpense ? b.expenseDate : b.incomeDate);
-      return dateA - dateB;
-    });
+  //   const sortedTransactions = combinedTransactions.sort((a, b) => {
+  //     const dateA = new Date(a.isExpense ? a.expenseDate : a.incomeDate);
+  //     const dateB = new Date(b.isExpense ? b.expenseDate : b.incomeDate);
+  //     return dateA - dateB;
+  //   });
   
-    setTransactions(sortedTransactions);
+  //   setTransactions(sortedTransactions);
+  // };
+  const loadTransactions = async () => {
+    try {
+      const [expenseResult, categoryResult] = await Promise.all([
+        axios.get('http://localhost:8080/expenses'),
+        axios.get('http://localhost:8080/categories')
+      ]);
+  
+      const expenses = expenseResult.data;
+      const categories = categoryResult.data;
+  
+      const combinedTransactions = expenses.map((expense) => {
+        const category = expense.category;
+        return {
+          ...expense,
+          isExpense: true,
+          categoryName: category ? category.categoryName : 'Uncategorized'
+        };
+      });
+      
+  
+      const incomeResult = await axios.get('http://localhost:8080/incomes');
+      const combinedIncomes = incomeResult.data.map((income) => ({ ...income, isExpense: false }));
+  
+      const sortedTransactions = [...combinedTransactions, ...combinedIncomes].sort((a, b) => {
+        const dateA = new Date(a.isExpense ? a.expenseDate : a.incomeDate);
+        const dateB = new Date(b.isExpense ? b.expenseDate : b.incomeDate);
+        return dateA - dateB;
+      });
+  
+      setTransactions(sortedTransactions);
+    } catch (error) {
+      console.error('Error loading transactions', error);
+    }
   };
+  
   useEffect(() => {
     const fetchIncomes = async () => {
       try {
@@ -116,9 +151,10 @@ const Home = () => {
   <thead>
     <tr>
       <th scope="col">#</th>
-      <th scope="col">Category</th>
+      <th scope="col">Description</th>
       <th scope="col">Amount</th>
       <th scope="col">Date</th>
+      <th scope='col'>Category</th>
       <th scope='col'>Actions</th>
     </tr>
   </thead>
@@ -129,6 +165,8 @@ const Home = () => {
             <td>{transaction.isExpense ? transaction.expenseType : transaction.incomeDesc}</td>
             <td>₹{transaction.isExpense ? transaction.cost : transaction.amount}</td>
             <td>{transaction.isExpense ? transaction.expenseDate : transaction.incomeDate}</td>
+            <td>{transaction.isExpense ? transaction.categoryName : 'N/A'}</td>
+
            <td>
   <div className="btn-group">
     <Link className='btn btn-primary' to={`/viewtransaction/${transaction.id}`}>

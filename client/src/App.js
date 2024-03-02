@@ -9,6 +9,7 @@ import EditExpense from './Components/EditExpense';
 import EditBudget from './Components/EditBudget';
 import Navbar from './Components/Navbar';
 import Statistics from './Components/Statistics';
+import AddCategoryForm from './Components/AddCategoryForm';
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
         <Route exact path='/viewtransaction/:id' element={<ViewExpense/>}/>
         <Route exact path='/edittransaction/:id' element={<EditExpense/>}/>
         <Route exact path='/editbudget' element={<EditBudget/>}/>
-
+        <Route exact path='/cat' element={<AddCategoryForm/>}/>
       </Routes>
      
       </Router>
