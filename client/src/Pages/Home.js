@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState ,useRef} from 'react'
 import Budget from '../Components/Budget'
 
 import Expense from '../Components/Expense'
@@ -7,13 +7,14 @@ import { faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Link, useParams,useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Income from '../Components/Income'
-
+import {useReactToPrint} from "react-to-print";
 const WarningMessage = () => (
   <div className="alert alert-warning" role="alert">
     Warning: Your budget is greater than 0!
   </div>
 );
 const Home = () => {
+  const componentPDF = useRef();
   const [totalIncome, setTotalIncome] = useState(0);
   const [totalExpense, setTotalExpense] = useState(0);
   const [budget, setBudget] = useState(2000);
@@ -87,6 +88,11 @@ const Home = () => {
     await axios.delete(`http://localhost:8080/${endpoint}/${id}`);
     loadTransactions();
   }
+  const generatePDF = useReactToPrint({
+    content:()=>componentPDF.current,
+    documentTitle:"ExpenseData",
+    onAfterPrint:()=>alert("Data saved in PDF")
+  })
   return (
     <>
     {warning && <WarningMessage />}
@@ -105,6 +111,7 @@ const Home = () => {
       </div>
       <div className='container'>
       <div className="py-4">
+        <div ref={componentPDF} style={{width:'100%'}}>
         <table className="table border shadow">
   <thead>
     <tr>
@@ -139,6 +146,11 @@ const Home = () => {
         ))}
       </tbody>
 </table>
+</div>
+<div className='d-flex justify-content-center mb-3'>
+  <button className='btn btn-success' onClick={generatePDF}>PDF</button>
+</div>
+
       </div>
     </div>
     </div>
