@@ -1,10 +1,10 @@
 package com.example.expensetracker.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jdk.jfr.DataAmount;
 
 import java.time.LocalDate;
+
 
 @Entity
 public class Expense {
@@ -16,6 +16,19 @@ public class Expense {
     private double cost;
 
     private LocalDate expenseDate;
+
+
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
     public String getExpenseType() {
         return expenseType;
