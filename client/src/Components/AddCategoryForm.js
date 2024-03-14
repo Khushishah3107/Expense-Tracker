@@ -46,6 +46,7 @@ const AddCategoryForm = () => {
       });
 
       console.log('Server Response:', response.data);
+      setCategoryExists(true);
       setCategoryAdded(true); // Set categoryAdded state to true on successful addition
       setCategoryName(""); // Clear input field after successful addition
 
