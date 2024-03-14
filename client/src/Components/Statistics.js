@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import LineChart from './LineChart';
+import BarChart from './LineChart';
 
 const Statistics = () => {
   const [chartData, setChartData] = useState({
@@ -32,13 +32,22 @@ const Statistics = () => {
         // Replace 'your_expense_api_endpoint' and 'your_income_api_endpoint' with your actual API endpoints
         const expenseResponse = await fetch('http://localhost:8080/expenses');
         const incomeResponse = await fetch('http://localhost:8080/incomes');
-
+  
         const expenseData = await expenseResponse.json();
         const incomeData = await incomeResponse.json();
-
-        // Assuming both expenseData and incomeData have date and amount properties
+  
+        // Combine and sort dates
+        const allDates = [
+          ...expenseData.map(item => item.expenseDate),
+          ...incomeData.map(item => item.incomeDate)
+        ].sort((a, b) => new Date(a) - new Date(b));
+  
+        // Deduplicate dates
+        const uniqueDates = Array.from(new Set(allDates));
+  
+        // Generate chart data
         const combinedData = {
-          labels: [...new Set([...expenseData.map(item => item.expenseDate), ...incomeData.map(item => item.incomeDate)])],
+          labels: uniqueDates,
           datasets: [
             {
               label: 'Expense',
@@ -49,22 +58,21 @@ const Statistics = () => {
               data: incomeData.map(item => ({ x: item.incomeDate, y: item.amount })),
             },
           ],
-       
         };
-
+  
         setChartData(combinedData);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-
+  
     fetchData();
   }, []);
-
+  
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
     <div style={{ width: '80%', height: '80%' }}>
-      <LineChart chartData={chartData} xAxisLabel="Date" yAxisLabel="Amount"/>
+      <BarChart chartData={chartData} xAxisLabel="Date" yAxisLabel="Amount"/>
     </div>
   </div>
   
