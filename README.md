@@ -1,4 +1,3 @@
-User
 Expense Tracker - an application for you to manage your finances and track your overall monetary statistics. 
 Whether you are trying to save money, stick to a budgt, or just gain insight into your spending habits, Expense Tracker makes it easy to record and categorize your expenditures.
 
