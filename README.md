@@ -15,6 +15,5 @@ How to use:
 2) Review Insights: Regularly monitor your spending habits and budget progress through insightful reports provided by the web-application.
 3) Generation of PDF: Generate PDF reports summarizing expenses and financial summaries for easy sharing and record-keeping.
 
-Disclaimer:
-Expense Tracker is intended for personal finance management. While we strive to offer accurate information, we cannot guarantee its correctness and completeness. Users are encouraged to exercise caution and diligence when using the application.
+
 
