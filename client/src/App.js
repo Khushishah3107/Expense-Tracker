@@ -10,6 +10,8 @@ import EditBudget from './Components/EditBudget';
 import Navbar from './Components/Navbar';
 import Statistics from './Components/Statistics';
 import AddCategoryForm from './Components/AddCategoryForm';
+import ViewIncome from './Components/ViewIncome';
+import EditIncome from './Components/EditIncome';
 
 function App() {
   return (
@@ -23,8 +25,12 @@ function App() {
         <Route exact path='/statistics' element={<Statistics/>}/>
         <Route exact path='/addexpense' element={<AddExpenseForm/>}/>
         <Route exact path='/addincome' element={<AddincomeForm/>}/>
-        <Route exact path='/viewtransaction/:id' element={<ViewExpense/>}/>
-        <Route exact path='/edittransaction/:id' element={<EditExpense/>}/>
+        {/* <Route exact path='/viewtransaction/:id' element={<ViewExpense/>}/> */}
+        {/* <Route exact path='/edittransaction/:id' element={<EditExpense/>}/> */}
+        <Route exact path='/viewExpense/:id' element={<ViewExpense/>}/>
+        <Route exact path='/viewIncome/:id' element={<ViewIncome/>}/>
+        <Route exact path='/editIncome/:id' element={<EditIncome/>}/>
+        <Route exact path='/editExpense/:id' element={<EditExpense/>}/> 
         <Route exact path='/editbudget' element={<EditBudget/>}/>
         <Route exact path='/cat' element={<AddCategoryForm/>}/>
       </Routes>

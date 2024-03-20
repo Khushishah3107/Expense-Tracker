@@ -29,6 +29,21 @@ const Home = () => {
   },[]);
   const {id} = useParams()
  
+  const handleViewClick = (id, isExpense) => {
+    if (isExpense) {
+      navigate(`/viewExpense/${id}`);
+    } else {
+      navigate(`/viewIncome/${id}`);
+    }
+  };
+  const handleEditCLick = (id,isExpense)=>{
+    if(isExpense){
+      navigate(`editExpense/${id}`);
+    }
+    else{
+      navigate(`editIncome/${id}`)
+    }
+  }
   // const loadTransactions = async () => {
   //   const incomeResult = await axios.get('http://localhost:8080/incomes');
   //   const expenseResult = await axios.get('http://localhost:8080/expenses');
@@ -48,6 +63,7 @@ const Home = () => {
   
   //   setTransactions(sortedTransactions);
   // };
+
   const loadTransactions = async () => {
     try {
       const [expenseResult, categoryResult] = await Promise.all([
@@ -169,12 +185,18 @@ const Home = () => {
 
            <td>
   <div className="btn-group">
-    <Link className='btn btn-primary' to={`/viewtransaction/${transaction.id}`}>
+  <button className='btn btn-primary' onClick={() => handleViewClick(transaction.id, transaction.isExpense)}>
+                            <FontAwesomeIcon icon={faEye} />
+                          </button>
+    {/* <Link className='btn btn-primary' to={`/viewtransaction/${transaction.id}`}>
       <FontAwesomeIcon icon={faEye} />
-    </Link>
-    <Link className='btn btn-outline-primary' to={`/edittransaction/${transaction.id}`}>
+    </Link> */}
+    {/* <Link className='btn btn-outline-primary' to={`/edittransaction/${transaction.id}`}>
       <FontAwesomeIcon icon={faEdit} />
-    </Link>
+    </Link> */}
+    <button className='btn btn-outline-primary' onClick={()=>handleEditCLick(transaction.id,transaction.isExpense)}>
+      <FontAwesomeIcon icon={faEdit}/>
+    </button>
     <button className='btn btn-danger' onClick={() => deleteTransaction(transaction.id, transaction.isExpense)}>
       <FontAwesomeIcon icon={faTrash} />
     </button>

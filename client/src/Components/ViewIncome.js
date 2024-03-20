@@ -1,44 +1,44 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
-
-const ViewExpense = () => {
-    const [expense,setExpense]= useState({
-        expenseType:"",
-        cost:"",
-        expenseDate:""
+import { useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+const ViewIncome = () => {
+    const [income,setIncome] = useState({
+        incomeDesc:"",
+        amount:"",
+        incomeDate:""
     })
     const {id} = useParams()
     useEffect(()=>{
-       loadExpense() 
+        loadIncome()
     },[])
-    const loadExpense=async()=>{
-        const result = await axios.get(`http://localhost:8080/expense/${id}`);
-        setExpense(result.data)
+    const loadIncome = async ()=>{
+        const result = await axios.get(`http://localhost:8080/incomes/${id}`)
+        setIncome(result.data)
     }
   return (
     <div>
-       <div className='container'>
+      <div className='container'>
       <div className="row">
         <div className='col-md-6 offset-md-3 border rounded p-4 mt-2 shadow'>
             <h2 className='text-center m-4'>
-                Expense Details
+                Income Details
             </h2>
             <div className="card">
                 <div className="card-header">
-                    Details of expense id : {expense.id}
+                    Details of income id : {income.id}
                     <ul className='list-group list-group-flush'>
                         <li className='list-group-item'>
-                            <b>Expense Category : </b>
-                            {expense.expenseType}
+                            <b>Income Description : </b>
+                            {income.incomeDesc}
                         </li>
                         <li className='list-group-item'>
-                            <b>Cost : </b>
-                            {expense.cost}
+                            <b>Amount : </b>
+                            {income.amount}
                         </li>
                         <li className='list-group-item'>
-                            <b>Expense date : </b>
-                            {expense.expenseDate}
+                            <b>Income date : </b>
+                            {income.incomeDate}
                         </li>
                     </ul>
                 </div>
@@ -52,4 +52,4 @@ const ViewExpense = () => {
   )
 }
 
-export default ViewExpense
+export default ViewIncome
