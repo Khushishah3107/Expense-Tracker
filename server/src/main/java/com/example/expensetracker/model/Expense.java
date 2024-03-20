@@ -15,6 +15,7 @@ public class Expense {
     private String expenseType;
     private double cost;
 
+
     private LocalDate expenseDate;
 
 

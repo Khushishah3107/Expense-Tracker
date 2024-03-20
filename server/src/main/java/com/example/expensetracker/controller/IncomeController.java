@@ -34,4 +34,11 @@ public class IncomeController {
         incomeRepository.deleteById(id);
         return "Income with id "+id+" has been deleted successfully";
     }
+    @GetMapping("/incomes/{id}")
+    Income getIncomeById(@PathVariable Long id){
+
+        return incomeRepository.findById(id)
+                .orElseThrow(()->new NotFoundException(id));
+    }
+
 }

@@ -18,11 +18,17 @@ public class CategoryController {
     private ExpenseRepository expenseRepository;
 
     @PostMapping("/placeCategory")
-  public Category placeCategory(@RequestBody CategoryDto categoryDto){
-     return categoryRepository.save(categoryDto.getCategory());
-  }
-  @GetMapping("/categories")
-  public List<Category> findAllCategories(){
+    public Category placeCategory(@RequestBody CategoryDto categoryDto) {
+        String categoryName = categoryDto.getCategory().getCategoryName();
+        Category existingCategory = categoryRepository.findByCategoryName(categoryName);
+        if (existingCategory != null) {
+            throw new IllegalArgumentException("Category already exists in the database.");
+        }
+        return categoryRepository.save(categoryDto.getCategory());
+    }
+
+    @GetMapping("/categories")
+    public List<Category> findAllCategories() {
         return categoryRepository.findAll();
-  }
+    }
 }
